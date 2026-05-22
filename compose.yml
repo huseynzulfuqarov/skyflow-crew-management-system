@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: skyflow-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: skyflow
+      POSTGRES_USER: skyflow
+      POSTGRES_PASSWORD: ruhi123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skyflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: skyflow-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:

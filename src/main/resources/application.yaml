@@ -1,3 +1,43 @@
 spring:
   application:
     name: skyflow
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/skyflow
+    username: skyflow
+    password: ruhi123
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    enabled: false
+
+  jackson:
+    time-zone: UTC
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    az.azal.skyflow: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
