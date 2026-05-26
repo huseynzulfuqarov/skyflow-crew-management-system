@@ -34,7 +34,7 @@ public class FlightDelay {
 
     private LocalDateTime newArrivalTime;
 
-    private Long delayMinutes;
+    private Integer delayMinutes;
 
     private boolean isHighRisk;
 

@@ -34,7 +34,7 @@ public class CrewMember extends BaseEntity {
 
     private LocalDateTime lastFlightEnd;
 
-    private Long totalFlightHours;
+    private Integer totalFlightHours;
 
     @Version
     private Long version;
