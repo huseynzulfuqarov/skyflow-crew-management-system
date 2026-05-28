@@ -31,5 +31,4 @@ public class Aircraft extends BaseEntity {
 
     @Version
     private Long version;
-
 }
