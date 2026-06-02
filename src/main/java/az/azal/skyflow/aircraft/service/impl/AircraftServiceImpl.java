@@ -68,6 +68,7 @@ public class AircraftServiceImpl implements AircraftService {
     }
 
     @Override
+    @Transactional
     public AircraftResponse delete(String registrationNumber) {
         Aircraft aircraft = aircraftRepository.findByRegistrationNumber(registrationNumber)
                 .orElseThrow(() -> ResourceNotFoundException.byField("Aircraft", "registrationNumber", registrationNumber));

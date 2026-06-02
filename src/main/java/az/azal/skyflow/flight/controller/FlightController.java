@@ -5,7 +5,6 @@ import az.azal.skyflow.flight.dto.FlightResponse;
 import az.azal.skyflow.flight.service.FlightService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +39,8 @@ public class FlightController {
 	}
 
 	@DeleteMapping("/{flightNumber}")
-	public ResponseEntity<FlightResponse> delete(@PathVariable String flightNumber) {
-		return ResponseEntity.ok(service.delete(flightNumber));
+	public ResponseEntity<Void> delete(@PathVariable String flightNumber) {
+		service.delete(flightNumber);
+		return ResponseEntity.noContent().build();
 	}
 }

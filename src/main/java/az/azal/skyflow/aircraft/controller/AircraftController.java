@@ -39,7 +39,8 @@ public class AircraftController {
     }
 
     @DeleteMapping("/{registrationNumber}")
-    public ResponseEntity<AircraftResponse> delete(@PathVariable String registrationNumber){
-        return ResponseEntity.ok(aircraftService.delete(registrationNumber));
+    public ResponseEntity<Void> delete(@PathVariable String registrationNumber){
+        aircraftService.delete(registrationNumber);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

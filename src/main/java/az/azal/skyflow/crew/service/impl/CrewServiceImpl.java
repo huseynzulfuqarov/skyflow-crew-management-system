@@ -10,7 +10,7 @@ import az.azal.skyflow.crew.model.CrewMember;
 import az.azal.skyflow.crew.model.CrewStatus;
 import az.azal.skyflow.crew.repository.CrewMemberRepository;
 import az.azal.skyflow.crew.service.CrewService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class CrewServiceImpl implements CrewService {
 	private final CrewMapper crewMapper;
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public CrewResponse getCrewByEmployeeId(String employeeId) {
 		CrewMember crewMember = repository.findByEmployeeId(employeeId)
 				.orElseThrow(() -> ResourceNotFoundException.byField("CrewMember", "employeeId", employeeId));
@@ -33,7 +33,7 @@ public class CrewServiceImpl implements CrewService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CrewResponse> getAll() {
 
 		return repository.findAll()
@@ -51,6 +51,7 @@ public class CrewServiceImpl implements CrewService {
 		}
 
 		CrewMember crewMember = crewMapper.toEntity(request);
+		crewMember.setStatus(CrewStatus.AVAILABLE);
 
 		repository.save(crewMember);
 
@@ -71,6 +72,7 @@ public class CrewServiceImpl implements CrewService {
 	}
 
 	@Override
+	@Transactional
 	public CrewResponse delete(String employeeId) {
 		CrewMember crewMember = repository.findByEmployeeId(employeeId)
 				.orElseThrow(() -> ResourceNotFoundException.byField("CrewMember", "employeeId", employeeId));

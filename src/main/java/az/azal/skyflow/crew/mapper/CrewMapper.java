@@ -19,6 +19,7 @@ public interface CrewMapper {
 	@Mapping(target = "version", ignore = true)
 	@Mapping(target = "lastFlightEnd", ignore = true)
 	@Mapping(target = "totalFlightHours", ignore = true)
+	@Mapping(target = "status", ignore = true)
 	CrewMember toEntity(CrewRequest request);
 
 	@Mapping(target = "id", ignore = true)

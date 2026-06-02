@@ -63,13 +63,13 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.UNPROCESSABLE_CONTENT.value(),
+                HttpStatus.UNPROCESSABLE_CONTENT.getReasonPhrase(),
                 ex.getMessage(),
                 request.getRequestURI(),
                 null
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_CONTENT);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -119,8 +119,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
                 "A database constraint was violated. Possible duplicate entry.",
                 request.getRequestURI(),
                 null
@@ -132,7 +132,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleException(Exception ex,
                                                          HttpServletRequest request) {
 
-        log.error("Unexpected error: {}", ex.getMessage());
+        log.error("Unexpected error at {}: ", request.getRequestURI(), ex);
 
         ErrorResponse errorResponse = new ErrorResponse(
                 LocalDateTime.now(),

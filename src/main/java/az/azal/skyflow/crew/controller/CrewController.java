@@ -1,6 +1,5 @@
 package az.azal.skyflow.crew.controller;
 
-
 import az.azal.skyflow.crew.dto.CrewRequest;
 import az.azal.skyflow.crew.dto.CrewResponse;
 import az.azal.skyflow.crew.service.CrewService;
@@ -41,7 +40,8 @@ public class CrewController {
 	}
 
 	@DeleteMapping("/{employeeId}")
-	public ResponseEntity<CrewResponse> delete(@PathVariable String employeeId) {
-		return ResponseEntity.ok(service.delete(employeeId));
+	public ResponseEntity<Void> delete(@PathVariable String employeeId) {
+		service.delete(employeeId);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }
