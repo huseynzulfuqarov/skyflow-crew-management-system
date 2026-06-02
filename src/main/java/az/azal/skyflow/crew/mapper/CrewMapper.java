@@ -1,9 +1,11 @@
 package az.azal.skyflow.crew.mapper;
 
 
+import az.azal.skyflow.crew.dto.CrewAssignmentResponse;
 import az.azal.skyflow.crew.dto.CrewRequest;
 import az.azal.skyflow.crew.dto.CrewResponse;
 import az.azal.skyflow.crew.model.CrewMember;
+import az.azal.skyflow.crew.model.FlightCrewAssignment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -12,6 +14,8 @@ import org.mapstruct.MappingTarget;
 public interface CrewMapper {
 
 	CrewResponse toResponse(CrewMember entity);
+
+	CrewAssignmentResponse toAssignmentResponse(FlightCrewAssignment assignment);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)

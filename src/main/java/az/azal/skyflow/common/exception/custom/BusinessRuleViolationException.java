@@ -35,4 +35,16 @@ public class BusinessRuleViolationException extends RuntimeException {
                 String.format("Aircraft %s has a conflicting flight at the requested time", registrationNumber)
         );
     }
+
+    public static BusinessRuleViolationException alreadyAssignedToFlight(String flightNumber, String employeeId) {
+        return new BusinessRuleViolationException(
+                String.format("Crew with %s was already assigned to the flight: %s", employeeId, flightNumber)
+        );
+    }
+
+    public static BusinessRuleViolationException cumulativeHoursViolation(String employeeId, long limit) {
+        return new BusinessRuleViolationException(
+                String.format("Assigning this flight would exceed cumulative hours limit for crew member %s (current: %d, limit: %d)", employeeId, limit, 12)
+        );
+    }
 }
