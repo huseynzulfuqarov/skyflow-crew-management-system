@@ -15,7 +15,7 @@ public interface FlightService {
 
 	FlightResponse update(String flightNumber, FlightRequest request);
 
-	FlightResponse delete(String flightNumber);
+	void delete(String flightNumber);
 
 	FlightResponse changeStatus(String flightNumber, FlightStatus newStatus, String changeReason);
 }

@@ -14,5 +14,5 @@ public interface CrewService {
 
 	CrewResponse update(String employeeId,CrewRequest request);
 
-	CrewResponse delete(String employeeId);
+	void delete(String employeeId);
 }

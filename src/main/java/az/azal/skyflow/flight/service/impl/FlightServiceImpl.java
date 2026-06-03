@@ -90,13 +90,12 @@ public class FlightServiceImpl implements FlightService {
 
 	@Override
 	@Transactional
-	public FlightResponse delete(String flightNumber) {
+	public void delete(String flightNumber) {
 		Flight flight = flightRepository.findByFlightNumber(flightNumber)
 				.orElseThrow(() -> ResourceNotFoundException.byField("Flight", "flightNumber", flightNumber));
 
 		flight.setStatus(FlightStatus.CANCELLED);
 		flightRepository.save(flight);
-		return flightMapper.toResponse(flight);
 	}
 
 	@Override

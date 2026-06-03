@@ -15,6 +15,12 @@ public interface CrewMapper {
 
 	CrewResponse toResponse(CrewMember entity);
 
+	@Mapping(source = "flight.id", target = "flightId")
+	@Mapping(source = "crewMember.id", target = "crewMemberId")
+	@Mapping(source = "crewMember.employeeId", target = "employeeId")
+	@Mapping(source = "crewMember.firstName", target = "firstName")
+	@Mapping(source = "crewMember.lastName", target = "lastName")
+	@Mapping(source = "crewMember.email", target = "email")
 	CrewAssignmentResponse toAssignmentResponse(FlightCrewAssignment assignment);
 
 	@Mapping(target = "id", ignore = true)
@@ -32,6 +38,7 @@ public interface CrewMapper {
 	@Mapping(target = "version", ignore = true)
 	@Mapping(target = "lastFlightEnd", ignore = true)
 	@Mapping(target = "totalFlightHours", ignore = true)
+	@Mapping(target = "status", ignore = true)
 	void updateEntity(CrewRequest request,@MappingTarget CrewMember entity);
 
 }

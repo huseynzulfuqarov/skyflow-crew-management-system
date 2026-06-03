@@ -10,10 +10,10 @@ import az.azal.skyflow.aircraft.service.AircraftService;
 import az.azal.skyflow.common.exception.custom.DuplicateResourceException;
 import az.azal.skyflow.common.exception.custom.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,12 +33,10 @@ public class AircraftServiceImpl implements AircraftService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AircraftResponse> getAll() {
+    public Page<AircraftResponse> getAll(Pageable pageable) {
 
-        return aircraftRepository.findAll()
-                .stream()
-                .map(aircraftMapper::toResponse)
-                .toList();
+        return aircraftRepository.findAll(pageable)
+                .map(aircraftMapper::toResponse);
     }
 
     @Override
@@ -69,13 +67,11 @@ public class AircraftServiceImpl implements AircraftService {
 
     @Override
     @Transactional
-    public AircraftResponse delete(String registrationNumber) {
+    public void delete(String registrationNumber) {
         Aircraft aircraft = aircraftRepository.findByRegistrationNumber(registrationNumber)
                 .orElseThrow(() -> ResourceNotFoundException.byField("Aircraft", "registrationNumber", registrationNumber));
 
         aircraft.setStatus(AircraftStatus.RETIRED);
         aircraftRepository.save(aircraft);
-
-        return aircraftMapper.toResponse(aircraft);
     }
 }

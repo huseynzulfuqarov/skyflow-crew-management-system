@@ -5,11 +5,13 @@ import az.azal.skyflow.aircraft.dto.AircraftResponse;
 import az.azal.skyflow.aircraft.service.AircraftService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/aircraft")
@@ -24,8 +26,10 @@ public class AircraftController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<AircraftResponse>> getAll(){
-        return ResponseEntity.ok(aircraftService.getAll());
+    public ResponseEntity<Page<AircraftResponse>> getAll(
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable){
+        return ResponseEntity.ok(aircraftService.getAll(pageable));
     }
 
     @PostMapping()

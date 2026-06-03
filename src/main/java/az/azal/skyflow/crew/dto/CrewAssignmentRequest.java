@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record CrewAssignmentRequest(
-		@NotNull(message = "Flight ID is required")
-		UUID flightId,
 
 		@NotNull(message = "Crew member ID is required")
 		UUID crewMemberId,

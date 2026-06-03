@@ -43,7 +43,7 @@ public interface FlightCrewAssignmentRepository extends JpaRepository<FlightCrew
 		  AND f.departure_time < :windowEnd
 		  AND f.arrival_time > :windowStart
 """, nativeQuery = true)
-	long sumFlightMinutesInWindow(@Param("crewMember") UUID crewMemberId,
+	long sumFlightMinutesInWindow(@Param("crewMemberId") UUID crewMemberId,
 							 @Param("windowStart") LocalDateTime windowStart,
 							 @Param("windowEnd") LocalDateTime windowEnd
 	);

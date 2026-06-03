@@ -73,14 +73,12 @@ public class CrewServiceImpl implements CrewService {
 
 	@Override
 	@Transactional
-	public CrewResponse delete(String employeeId) {
+	public void delete(String employeeId) {
 		CrewMember crewMember = repository.findByEmployeeId(employeeId)
 				.orElseThrow(() -> ResourceNotFoundException.byField("CrewMember", "employeeId", employeeId));
 
 		crewMember.setStatus(CrewStatus.INACTIVE);
 
 		repository.save(crewMember);
-
-		return crewMapper.toResponse(crewMember);
 	}
 }
