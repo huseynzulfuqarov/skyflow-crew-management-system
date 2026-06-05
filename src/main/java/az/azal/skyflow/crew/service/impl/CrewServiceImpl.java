@@ -9,11 +9,15 @@ import az.azal.skyflow.crew.model.CrewMember;
 import az.azal.skyflow.crew.model.CrewStatus;
 import az.azal.skyflow.crew.repository.CrewMemberRepository;
 import az.azal.skyflow.crew.service.CrewService;
+import az.azal.skyflow.flight.model.Flight;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -76,5 +80,21 @@ public class CrewServiceImpl implements CrewService {
 		crewMember.setStatus(CrewStatus.INACTIVE);
 
 		repository.save(crewMember);
+	}
+
+	@Override
+	@Transactional
+	public void recordFlightCompletion(CrewMember crewMember, Flight flight) {
+		crewMember.setLastFlightEnd(LocalDateTime.now());
+
+		LocalDateTime actualDepartureTime = (flight.getActualDepartureTime() != null)
+				? flight.getActualDepartureTime() : flight.getDepartureTime();
+
+		long flightMinutes = Duration.between(actualDepartureTime, flight.getActualArrivalTime()).toMinutes();
+
+		crewMember.setTotalFlightHours(crewMember.getTotalFlightHours() + (int) flightMinutes / 60);
+
+		repository.save(crewMember);
+
 	}
 }

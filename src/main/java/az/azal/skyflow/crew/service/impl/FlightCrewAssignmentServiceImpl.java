@@ -66,6 +66,24 @@ public class FlightCrewAssignmentServiceImpl implements FlightCrewAssignmentServ
 		return crewMapper.toAssignmentResponse(assignment);
 	}
 
+	@Override
+	@Transactional
+	public List<FlightCrewAssignment> handleCrewUnavailability(CrewMember crewMember) {
+
+		LocalDateTime now = LocalDateTime.now();
+
+		List<FlightCrewAssignment> futureAssignments =
+				assignmentRepository.findFutureAssignmentsByCrewMember(crewMember, now);
+
+		if(futureAssignments.isEmpty()){
+			return futureAssignments;
+		}
+
+		assignmentRepository.updateFutureAssignmentStatuses(crewMember, AssignmentStatus.REMOVED, now);
+
+		return futureAssignments;
+	}
+
 	private void checkTimeConflict(CrewMember crewMember, Flight newFlight) {
 
 		boolean hasConflict = assignmentRepository.hasTimeConflicts(
