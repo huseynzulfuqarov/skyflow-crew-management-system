@@ -1,5 +1,9 @@
 package az.azal.skyflow.common.exception.custom;
 
+import az.azal.skyflow.flight.model.FlightStatus;
+
+import java.time.LocalDateTime;
+
 public class BusinessRuleViolationException extends RuntimeException {
 
     public BusinessRuleViolationException(String message) {
@@ -45,6 +49,18 @@ public class BusinessRuleViolationException extends RuntimeException {
     public static BusinessRuleViolationException cumulativeHoursViolation(String employeeId, long limit) {
         return new BusinessRuleViolationException(
                 String.format("Assigning this flight would exceed cumulative hours limit for crew member %s (current: %d, limit: %d)", employeeId, limit, 12)
+        );
+    }
+
+	public static BusinessRuleViolationException flightStatusViolation(FlightStatus status) {
+        return new BusinessRuleViolationException(
+                String.format("Cannot perform this operation when flight status is: %s", status)
+        );
+	}
+
+    public static BusinessRuleViolationException invalidDelayTime(LocalDateTime localDateTime, LocalDateTime departureTime) {
+        return new BusinessRuleViolationException(
+                String.format("New departure time %s must be after current departure time %s", localDateTime, departureTime)
         );
     }
 }
