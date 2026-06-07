@@ -1,9 +1,11 @@
 package az.azal.skyflow.notification.model;
 
 public enum NotificationType {
+    FLIGHT_DELAYED,
+    FLIGHT_COMPLETED,
+    CREW_STATUS_CHANGED,
+    CREW_UNAVAILABLE,
     CONFLICT,
-    DELAY,
-    CANCELLATION,
     ASSIGNMENT,
     CREW_SHORTAGE,
     MAINTENANCE,

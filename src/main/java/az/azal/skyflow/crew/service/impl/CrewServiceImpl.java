@@ -4,12 +4,14 @@ import az.azal.skyflow.common.exception.custom.DuplicateResourceException;
 import az.azal.skyflow.common.exception.custom.ResourceNotFoundException;
 import az.azal.skyflow.crew.dto.CrewRequest;
 import az.azal.skyflow.crew.dto.CrewResponse;
+import az.azal.skyflow.crew.event.CrewStatusChangedEvent;
 import az.azal.skyflow.crew.mapper.CrewMapper;
 import az.azal.skyflow.crew.model.CrewMember;
 import az.azal.skyflow.crew.model.CrewStatus;
 import az.azal.skyflow.crew.repository.CrewMemberRepository;
 import az.azal.skyflow.crew.service.CrewService;
 import az.azal.skyflow.flight.model.Flight;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class CrewServiceImpl implements CrewService {
 	private final CrewMemberRepository repository;
 
 	private final CrewMapper crewMapper;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -77,9 +80,17 @@ public class CrewServiceImpl implements CrewService {
 		CrewMember crewMember = repository.findByEmployeeId(employeeId)
 				.orElseThrow(() -> ResourceNotFoundException.byField("CrewMember", "employeeId", employeeId));
 
+		CrewStatus oldStatus = crewMember.getStatus();
 		crewMember.setStatus(CrewStatus.INACTIVE);
-
 		repository.save(crewMember);
+
+		eventPublisher.publishEvent(new CrewStatusChangedEvent(
+				crewMember.getId(),
+				crewMember.getEmployeeId(),
+				oldStatus,
+				CrewStatus.INACTIVE,
+				"SYSTEM"
+		));
 	}
 
 	@Override

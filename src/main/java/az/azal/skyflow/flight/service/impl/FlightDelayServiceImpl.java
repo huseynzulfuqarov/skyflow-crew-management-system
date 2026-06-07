@@ -4,6 +4,7 @@ import az.azal.skyflow.common.exception.custom.BusinessRuleViolationException;
 import az.azal.skyflow.common.exception.custom.ResourceNotFoundException;
 import az.azal.skyflow.flight.dto.DelayRequest;
 import az.azal.skyflow.flight.dto.DelayResponse;
+import az.azal.skyflow.flight.event.FlightDelayedEvent;
 import az.azal.skyflow.flight.mapper.DelayMapper;
 import az.azal.skyflow.flight.model.Flight;
 import az.azal.skyflow.flight.model.FlightDelay;
@@ -13,6 +14,7 @@ import az.azal.skyflow.flight.repository.FlightRepository;
 import az.azal.skyflow.flight.service.FlightDelayService;
 import az.azal.skyflow.flight.service.FlightStatusService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class FlightDelayServiceImpl implements FlightDelayService {
 	private final FlightDelayRepository flightDelayRepository;
 	private final FlightStatusService flightStatusService;
 	private final DelayMapper delayMapper;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
 	public DelayResponse delayFlight(UUID flightId, DelayRequest request, String delayedBy) {
@@ -68,8 +71,17 @@ public class FlightDelayServiceImpl implements FlightDelayService {
 
 		flightRepository.save(flight);
 
+		eventPublisher.publishEvent(new FlightDelayedEvent(
+				flight.getId(),
+				flight.getFlightNumber(),
+				request.reason(),
+				(int) delayMinutes,
+				delayMinutes >= 120,    //bu serte gore true, false gonderecek
+				request.newDepartureTime(),
+				newArrivalTime,
+				delayedBy
+		));
+
 		return delayMapper.toResponse(delay);
 	}
-
-
 }

@@ -2,13 +2,14 @@ package az.azal.skyflow.crew.service.impl;
 
 import az.azal.skyflow.common.exception.custom.ResourceNotFoundException;
 import az.azal.skyflow.crew.dto.CrewResponse;
+import az.azal.skyflow.crew.event.CrewStatusChangedEvent;
 import az.azal.skyflow.crew.mapper.CrewMapper;
 import az.azal.skyflow.crew.model.CrewMember;
 import az.azal.skyflow.crew.model.CrewStatus;
 import az.azal.skyflow.crew.repository.CrewMemberRepository;
 import az.azal.skyflow.crew.service.CrewStatusService;
-import az.azal.skyflow.crew.service.FlightCrewAssignmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CrewStatusServiceImpl implements CrewStatusService {
 
-
 	private final CrewMemberRepository crewMemberRepository;
-	private final FlightCrewAssignmentService flightCrewAssignmentService;
 	private final CrewMapper crewMapper;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
 	@Transactional
@@ -33,15 +33,18 @@ public class CrewStatusServiceImpl implements CrewStatusService {
 		CrewMember crew = crewMemberRepository.findById(crewId)
 				.orElseThrow(() -> ResourceNotFoundException.byId("CrewMember", crewId));
 
+		CrewStatus oldStatus = crew.getStatus();
 		crew.setStatus(newStatus);
 		crewMemberRepository.save(crew);
 
-		if(newStatus == CrewStatus.SICK
-				|| newStatus == CrewStatus.ON_LEAVE
-				|| newStatus == CrewStatus.INACTIVE) {
+		eventPublisher.publishEvent(new CrewStatusChangedEvent(
+				crew.getId(),
+				crew.getEmployeeId(),
+				oldStatus,
+				newStatus,
+				changedBy
+		));
 
-		flightCrewAssignmentService.handleCrewUnavailability(crew);
-		}
 		return crewMapper.toResponse(crew);
 	}
 }
