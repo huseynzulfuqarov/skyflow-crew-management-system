@@ -21,6 +21,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
+    private final WebSocketService webSocketService;
 
     @Transactional
     public NotificationResponse create(
@@ -38,7 +39,11 @@ public class NotificationService {
         notification.setRead(false);
         notificationRepository.save(notification);
 
-        return notificationMapper.toResponse(notification);
+        NotificationResponse response = notificationMapper.toResponse(notification);
+
+        webSocketService.broadcastNotification(response);
+
+        return response;
     }
 
     @Transactional(readOnly = true)
