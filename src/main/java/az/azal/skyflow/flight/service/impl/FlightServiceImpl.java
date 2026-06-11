@@ -1,6 +1,7 @@
 package az.azal.skyflow.flight.service.impl;
 
 import az.azal.skyflow.aircraft.model.Aircraft;
+import az.azal.skyflow.aircraft.model.AircraftStatus;
 import az.azal.skyflow.aircraft.repository.AircraftRepository;
 import az.azal.skyflow.common.exception.custom.BusinessRuleViolationException;
 import az.azal.skyflow.common.exception.custom.DuplicateResourceException;
@@ -53,6 +54,10 @@ public class FlightServiceImpl implements FlightService {
 
 		Aircraft aircraft = aircraftRepository.findById(request.aircraftId())
 				.orElseThrow(() -> ResourceNotFoundException.byId("Aircraft", request.aircraftId()));
+
+		if(aircraft.getStatus() != AircraftStatus.ACTIVE){
+			throw BusinessRuleViolationException.aircraftNotActive(request.aircraftId());
+		}
 
 		Flight flight = flightMapper.toEntity(request);
 		flight.setAircraft(aircraft);

@@ -1,8 +1,10 @@
 package az.azal.skyflow.common.exception.custom;
 
 import az.azal.skyflow.flight.model.FlightStatus;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class BusinessRuleViolationException extends RuntimeException {
 
@@ -63,4 +65,11 @@ public class BusinessRuleViolationException extends RuntimeException {
                 String.format("New departure time %s must be after current departure time %s", localDateTime, departureTime)
         );
     }
+
+    public static BusinessRuleViolationException aircraftNotActive(UUID uuid) {
+        return new BusinessRuleViolationException(
+                String.format("Aircraft with ID %s is not active and cannot be assigned to a flight", uuid)
+        );
+    }
+
 }
