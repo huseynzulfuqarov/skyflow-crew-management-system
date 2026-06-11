@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,27 +19,32 @@ public class CrewController {
 
 	private final CrewService service;
 
+	@PreAuthorize("hasRole('VIEWER')")
 	@GetMapping("/{employeeId}")
 	public ResponseEntity<CrewResponse> getCrewByEmployeeId(@PathVariable String employeeId) {
 		return ResponseEntity.ok(service.getCrewByEmployeeId(employeeId));
 	}
 
+	@PreAuthorize("hasRole('VIEWER')")
 	@GetMapping
 	public ResponseEntity<Page<CrewResponse>> getAll(Pageable pageable) {
 		return ResponseEntity.ok(service.getAll(pageable));
 	}
 
+	@PreAuthorize("hasRole('OPERATIONS')")
 	@PostMapping
 	public ResponseEntity<CrewResponse> createCrew(@Valid @RequestBody CrewRequest request) {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
 	}
 
+	@PreAuthorize("hasRole('OPERATIONS')")
 	@PutMapping("/{employeeId}")
 	public ResponseEntity<CrewResponse> updateCrew(@PathVariable String employeeId, @Valid @RequestBody CrewRequest request) {
 		return ResponseEntity.ok(service.update(employeeId, request));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{employeeId}")
 	public ResponseEntity<Void> delete(@PathVariable String employeeId) {
 		service.delete(employeeId);

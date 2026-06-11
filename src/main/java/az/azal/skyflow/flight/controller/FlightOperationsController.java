@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -22,11 +23,13 @@ public class FlightOperationsController {
 	private final FlightDelayService flightDelayService;
 	private final FlightCompletionService flightCompletionService;
 
+	@PreAuthorize("hasRole('OPERATIONS')")
 	@PostMapping("/{id}/delay")
 	public ResponseEntity<DelayResponse> delayFlight(@PathVariable UUID id, @Valid @RequestBody DelayRequest request){
 		return ResponseEntity.status(HttpStatus.CREATED).body(flightDelayService.delayFlight(id, request, "system"));
 	}
 
+	@PreAuthorize("hasRole('OPERATIONS')")
 	@PostMapping("/{id}/complete")
 	public ResponseEntity<FlightResponse> completeFlight(@PathVariable UUID id){
 		return ResponseEntity.ok(flightCompletionService.completeFlight(id, "system"));

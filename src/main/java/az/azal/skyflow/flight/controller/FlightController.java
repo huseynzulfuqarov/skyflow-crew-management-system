@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,32 +20,38 @@ public class FlightController {
 
 	private final FlightService service;
 
+	@PreAuthorize("hasRole('VIEWER')")
 	@GetMapping("/{flightNumber}")
 	public ResponseEntity<FlightResponse> getByFlightNumber(@PathVariable String flightNumber){
 		return ResponseEntity.ok(service.getByFlightNumber(flightNumber));
 	}
 
+	@PreAuthorize("hasRole('VIEWER')")
 	@GetMapping
 	public ResponseEntity<Page<FlightResponse>> getAll(Pageable pageable){
 		return ResponseEntity.ok(service.getAll(pageable));
 	}
 
+	@PreAuthorize("hasRole('OPERATIONS')")
 	@PostMapping
 	public ResponseEntity<FlightResponse> create(@Valid @RequestBody FlightRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
 	}
 
+	@PreAuthorize("hasRole('OPERATIONS')")
 	@PutMapping("/{flightNumber}")
 	public ResponseEntity<FlightResponse> update(@PathVariable String flightNumber, @Valid @RequestBody FlightRequest request) {
 		return ResponseEntity.ok(service.update(flightNumber, request));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{flightNumber}")
 	public ResponseEntity<Void> delete(@PathVariable String flightNumber) {
 		service.delete(flightNumber);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasRole('OPERATIONS')")
 	@PatchMapping("/{flightNumber}/status")
 	public ResponseEntity<FlightResponse> changeStatus(@PathVariable String flightNumber, @RequestParam FlightStatus newStatus, @RequestParam String changeReason) {
 		FlightResponse response = service.changeStatus(flightNumber, newStatus, changeReason);
