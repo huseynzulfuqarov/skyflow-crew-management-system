@@ -1,5 +1,6 @@
 package az.azal.skyflow.common.exception;
 
+import az.azal.skyflow.common.exception.custom.AuthException;
 import az.azal.skyflow.common.exception.custom.BusinessRuleViolationException;
 import az.azal.skyflow.common.exception.custom.DuplicateResourceException;
 import az.azal.skyflow.common.exception.custom.ResourceNotFoundException;
@@ -184,6 +185,23 @@ public class GlobalExceptionHandler {
                 null
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ErrorResponse> handleAuthException(AuthException ex,HttpServletRequest request) {
+
+        log.error("Auth Exception at {}: {}", request.getRequestURI(), ex.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)
