@@ -1,5 +1,7 @@
 package az.azal.skyflow.crew.service.impl;
 
+import az.azal.skyflow.auth.model.AppUser;
+import az.azal.skyflow.auth.repository.AppUserRepository;
 import az.azal.skyflow.common.exception.custom.BusinessRuleViolationException;
 import az.azal.skyflow.common.exception.custom.ResourceNotFoundException;
 import az.azal.skyflow.crew.dto.CrewAssignmentRequest;
@@ -31,10 +33,11 @@ public class FlightCrewAssignmentServiceImpl implements FlightCrewAssignmentServ
 	private final CrewMemberRepository crewMemberRepository;
 	private final FlightCrewAssignmentRepository assignmentRepository;
 	private final CrewMapper crewMapper;
+	private final AppUserRepository appUserRepository;
 
 	@Override
 	@Transactional
-	public CrewAssignmentResponse assignCrewToFlights(UUID flightId, CrewAssignmentRequest request) {
+	public CrewAssignmentResponse assignCrewToFlights(UUID flightId, CrewAssignmentRequest request, String assignedBy) {
 		// 1
 		Flight flight = flightRepository.findById(flightId)
 				.orElseThrow(() -> ResourceNotFoundException.byId("Flight", flightId));
@@ -55,12 +58,17 @@ public class FlightCrewAssignmentServiceImpl implements FlightCrewAssignmentServ
 		// 6
 		checkRestPeriod(crewMember, flight);
 		// 7
+
+		AppUser assignedByUser = appUserRepository.findByUsername(assignedBy)
+				.orElseThrow(() -> ResourceNotFoundException.byField("User", "username", assignedBy));
+
 		FlightCrewAssignment assignment = new FlightCrewAssignment();
 		assignment.setCrewMember(crewMember);
 		assignment.setFlight(flight);
 		assignment.setRoleOnFlight(request.roleOnFlight());
 		assignment.setAssignmentStatus(AssignmentStatus.ASSIGNED);
 		assignment.setAssignedAt(LocalDateTime.now());
+		assignment.setAssignedBy(assignedByUser);
 		assignmentRepository.save(assignment);
 
 		return crewMapper.toAssignmentResponse(assignment);

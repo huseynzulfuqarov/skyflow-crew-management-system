@@ -1,5 +1,7 @@
 package az.azal.skyflow.flight.service.impl;
 
+import az.azal.skyflow.auth.model.AppUser;
+import az.azal.skyflow.auth.repository.AppUserRepository;
 import az.azal.skyflow.common.exception.custom.BusinessRuleViolationException;
 import az.azal.skyflow.common.exception.custom.ResourceNotFoundException;
 import az.azal.skyflow.flight.dto.DelayRequest;
@@ -31,6 +33,7 @@ public class FlightDelayServiceImpl implements FlightDelayService {
 	private final FlightStatusService flightStatusService;
 	private final DelayMapper delayMapper;
 	private final ApplicationEventPublisher eventPublisher;
+	private final AppUserRepository userRepository;
 
 	@Transactional
 	public DelayResponse delayFlight(UUID flightId, DelayRequest request, String delayedBy) {
@@ -52,6 +55,9 @@ public class FlightDelayServiceImpl implements FlightDelayService {
 
 		LocalDateTime newArrivalTime = request.newDepartureTime().plus(flightDuration);
 
+		AppUser delayedByUser = userRepository.findByUsername(delayedBy)
+				.orElseThrow(() -> ResourceNotFoundException.byField("User", "username", delayedBy));
+
 		FlightDelay delay = new FlightDelay();
 		delay.setFlight(flight);
 		delay.setDelayReason(request.reason());
@@ -61,7 +67,7 @@ public class FlightDelayServiceImpl implements FlightDelayService {
 		delay.setNewDepartureTime(request.newDepartureTime());
 		delay.setNewArrivalTime(newArrivalTime);
 		delay.setHighRisk(delayMinutes >= 120);
-		// delay.setReportedBy(delayedBy); // this will be handled after the security is written
+		delay.setReportedBy(delayedByUser);
 		flightDelayRepository.save(delay);
 
 		flight.setDepartureTime(request.newDepartureTime());
