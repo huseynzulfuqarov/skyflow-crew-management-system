@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -20,8 +21,8 @@ public class CrewStatusController {
 
 	@PreAuthorize("hasRole('OPERATIONS')")
 	@PatchMapping(path = "/{id}/status")
-	public ResponseEntity<CrewResponse> updateCrewStatus(@PathVariable UUID id, @Valid @RequestBody CrewStatusRequest request) {
+	public ResponseEntity<CrewResponse> updateCrewStatus(@PathVariable UUID id, @Valid @RequestBody CrewStatusRequest request, @AuthenticationPrincipal String updatedBy) {
 		return ResponseEntity.ok(crewStatusService
-				.updateCrewStatus(id, request.newStatus(), request.changedBy()));
+				.updateCrewStatus(id, request.newStatus(), updatedBy));
 	}
 }

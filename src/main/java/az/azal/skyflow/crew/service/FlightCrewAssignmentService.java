@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface FlightCrewAssignmentService {
 
-	CrewAssignmentResponse assignCrewToFlights(UUID flightId, CrewAssignmentRequest request);
+	CrewAssignmentResponse assignCrewToFlights(UUID flightId, CrewAssignmentRequest request, String assignedBy);
 
 	List<FlightCrewAssignment> handleCrewUnavailability(CrewMember crewMember);
 }

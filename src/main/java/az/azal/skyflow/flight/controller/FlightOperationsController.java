@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,14 +26,14 @@ public class FlightOperationsController {
 
 	@PreAuthorize("hasRole('OPERATIONS')")
 	@PostMapping("/{id}/delay")
-	public ResponseEntity<DelayResponse> delayFlight(@PathVariable UUID id, @Valid @RequestBody DelayRequest request){
-		return ResponseEntity.status(HttpStatus.CREATED).body(flightDelayService.delayFlight(id, request, "system"));
+	public ResponseEntity<DelayResponse> delayFlight(@PathVariable UUID id, @Valid @RequestBody DelayRequest request, @AuthenticationPrincipal String delayedBy) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(flightDelayService.delayFlight(id, request, delayedBy));
 	}
 
 	@PreAuthorize("hasRole('OPERATIONS')")
 	@PostMapping("/{id}/complete")
-	public ResponseEntity<FlightResponse> completeFlight(@PathVariable UUID id){
-		return ResponseEntity.ok(flightCompletionService.completeFlight(id, "system"));
+	public ResponseEntity<FlightResponse> completeFlight(@PathVariable UUID id, @AuthenticationPrincipal String completedBy){
+		return ResponseEntity.ok(flightCompletionService.completeFlight(id, completedBy));
 	}
 
 }
